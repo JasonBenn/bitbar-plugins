@@ -49,13 +49,17 @@ with open(API_KEY) as fp:
         'restrict_end': date,
         'restrict_kind': 'productivity',
     })
-    pulse = get('https://www.rescuetime.com/anapi/data.json', params={
+    pulse = get('https://www.rescuetime.com/anapi/current_productivity_pulse.json', params={
         'key': key,
     })
-    productive_hours = round(sum([row[1] for row in pulse['rows'] if row[5] >= 1])/60.0/60, 2)
+    data = get('https://www.rescuetime.com/anapi/data.json', params={
+        'key': key,
+    })
+    productive_hours = sum([row[1] for row in data['rows'] if row[5] >= 1])/60.0/60
 
-# print('%s | color=%s' % (productive_hours, "#fff"))
-print(str(productive_hours))
+    pulse_colored = '{} | color={}'.format(pulse['pulse'], pulse['color'])
+
+print("{:.2f} - {}".format(productive_hours, pulse_colored))
 print('---')
 print('Rescue Time | href=https://www.rescuetime.com/dashboard?src=bitbar')
 for rank, seconds, people, productivty in result['rows']:
