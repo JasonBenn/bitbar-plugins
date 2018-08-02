@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-# <bitbar.title>RescueTime</bitbar.title>
+# <bitbar.title>RescueTime Productive Time</bitbar.title>
 # <bitbar.version>v1.0</bitbar.version>
-# <bitbar.author>Paul Traylor</bitbar.author>
+# <bitbar.author>Jason Benn & Paul Traylor</bitbar.author>
 # <bitbar.author.github>kfdm</bitbar.author.github>
-# <bitbar.desc>Show your RescueTime productivity pulse in the status bar</bitbar.desc>
+# <bitbar.desc>Show your RescueTime productivity time & pulse in the status bar</bitbar.desc>
 # <bitbar.dependencies>python</bitbar.dependencies>
 #
 # To install, you will want to generate an API key for rescue time and then store the
