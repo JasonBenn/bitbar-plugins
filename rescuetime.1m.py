@@ -55,12 +55,15 @@ with open(API_KEY) as fp:
     data = get('https://www.rescuetime.com/anapi/data.json', params={
         'key': key,
     })
-    productive_hours = sum([row[1] for row in data['rows'] if row[5] >= 1])/60.0/60
-
+    prod_total = sum([row[1] for row in data['rows'] if row[5] >= 1])
     pulse_colored = '{} | color={}'.format(pulse['pulse'], pulse['color'])
 
-print("{:.2f} - {}".format(productive_hours, pulse_colored))
+def mins_to_time(seconds):
+    minutes = seconds / 60
+    return "{}:{:02}".format(minutes / 60, minutes % 60)
+
+print("{} - {}".format(mins_to_time(prod_total), pulse_colored))
 print('---')
 print('Rescue Time | href=https://www.rescuetime.com/dashboard?src=bitbar')
-for rank, seconds, people, productivty in result['rows']:
-    print('%s %s' % (MAPPING[productivty], round(seconds / 60.0 / 60, 2)))
+for rank, seconds, people, productivity in result['rows']:
+    print('%s \t %s' % (mins_to_time(seconds), MAPPING[productivity]))
