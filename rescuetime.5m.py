@@ -23,8 +23,10 @@ def get(url, params):
     return json.loads(result)
 
 
-def mins_to_time(minutes):
-    return "{}:{:02}".format(minutes // 60, minutes % 60)
+def h_to_t(hours_float):
+    hours = int(hours_float)
+    mins = int(hours_float % 1 * 60)
+    return "{}:{:02d}".format(hours, mins)
 
 
 MAPPING = {
@@ -54,10 +56,31 @@ data = get('https://www.rescuetime.com/anapi/data', params={
     'restrict_kind': 'productivity',
 })
 pulse = get('https://www.rescuetime.com/anapi/current_productivity_pulse.json', params={'key': key})
-# summary = get('https://www.rescuetime.com/anapi/daily_summary_feed.json', params={'key': key})
 
 activities = data['rows']
-total_mins = sum([x[1] for x in activities]) // 60
-total_very_prod_mins = sum([x[1] for x in activities if x[3] == 2]) // 60
+time_today = sum([x[1] for x in activities]) // 60 / 60
+vp_time_today = sum([x[1] for x in activities if x[3] == 2]) // 60 / 60
 pulse_color = pulse['color']
-print("{} (of {}) | color={}".format(mins_to_time(total_very_prod_mins), mins_to_time(total_mins), pulse_color))
+print("{} (of {}) | color={}".format(h_to_t(vp_time_today), h_to_t(time_today), pulse_color))
+
+print('---')
+
+# Print summaries for last 7 days
+summary = get('https://www.rescuetime.com/anapi/daily_summary_feed.json', params={'key': key})
+last_7_days = summary[:7]
+last_7_as_days_of_week = [datetime.datetime.strptime(x['date'], '%Y-%m-%d').weekday() for x in last_7_days]
+monday_index = last_7_as_days_of_week.index(0)
+this_week_daily_summaries = last_7_days[:monday_index+1]
+
+week_vp_time = vp_time_today
+week_time = time_today
+
+for x in this_week_daily_summaries:
+    day = datetime.datetime.strptime(x['date'], '%Y-%m-%d').strftime('%a')
+    day_time = x['all_productive_hours'] + x['neutral_hours'] + x['all_distracting_hours']
+    day_vp_time = x['very_productive_hours']
+    print("{}: {} (of {})".format(day, h_to_t(day_vp_time), h_to_t(day_time)))
+    week_vp_time += day_vp_time
+    week_time += day_time
+
+print("Total: {} (of {})".format(h_to_t(week_vp_time), h_to_t(week_time)))
