@@ -55,7 +55,7 @@ with open(API_KEY) as fp:
     data = get('https://www.rescuetime.com/anapi/data.json', params={
         'key': key,
     })
-    prod_total = sum([row[1] for row in data['rows'] if row[5] >= 1])
+    prod_total = sum([row[1] for row in data['rows'] if row[5] == 2])
     pulse_colored = '{} | color={}'.format(pulse['pulse'], pulse['color'])
 
 def mins_to_time(seconds):
