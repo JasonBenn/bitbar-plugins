@@ -44,7 +44,6 @@ if not os.path.exists(API_KEY):
     print('Missing API Key')
     exit()
 
-
 key = open(API_KEY).read().strip()
 date = datetime.date.today().strftime('%Y-%m-%d')
 data = get('https://www.rescuetime.com/anapi/data', params={
@@ -58,8 +57,8 @@ data = get('https://www.rescuetime.com/anapi/data', params={
 pulse = get('https://www.rescuetime.com/anapi/current_productivity_pulse.json', params={'key': key})
 
 activities = data['rows']
-time_today = sum([x[1] for x in activities]) // 60 / 60
-vp_time_today = sum([x[1] for x in activities if x[3] == 2]) // 60 / 60
+time_today = float(sum([x[1] for x in activities])) / 60 / 60
+vp_time_today = float(sum([x[1] for x in activities if x[3] == 2])) / 60 / 60
 pulse_color = pulse['color']
 print("{} (of {}) | color={}".format(h_to_t(vp_time_today), h_to_t(time_today), pulse_color))
 
